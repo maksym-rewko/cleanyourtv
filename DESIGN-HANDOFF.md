@@ -10,6 +10,9 @@ cd ~/Claude/cleanyourtv
 source env.sh                  # JAVA_HOME, ANDROID_HOME, TV_SONY, TV_HOST
 ```
 
+TV addresses are kept in `env.local.sh`, which is gitignored and stays on this Mac. On a new computer, copy
+`env.local.sh.example` to `env.local.sh` and fill them in.
+
 The TV must be on, on the same Wi-Fi, with USB debugging on (Settings > System > Developer options).
 Check the IP in Settings > Network first; it can change after a reboot.
 
