@@ -15,8 +15,9 @@
 # Batches are enabled one at a time and the TV is checked after each. A batch that is commented out
 # has not been applied yet.
 #
-# Already disabled before this list: com.android.vending (Play Store, left as is by the owner),
-# com.sony.dtv.homekit, com.sony.dtv.b2b.vendorprotocol, com.sony.dtv.b2b.softap,
+# Play Store (com.android.vending) was disabled at the start and was re-enabled on 2026-10-21 at the owner's request
+# (it has a tile on Home); it is not in this list, so restore.sh leaves it enabled.
+# Already disabled before this list: com.sony.dtv.homekit, com.sony.dtv.b2b.vendorprotocol, com.sony.dtv.b2b.softap,
 # com.google.android.music, com.google.android.play.games.
 # Kept by owner's choice: Chromecast built-in (com.google.android.apps.mediashell) and AirPlay
 # (com.sony.dtv.airplayapp, com.apple.atve.sony.appletv).

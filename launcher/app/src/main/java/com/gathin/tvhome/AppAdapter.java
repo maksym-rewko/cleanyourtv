@@ -183,6 +183,10 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private int docked, emptySlots;
     /** Never shown as tiles (res/values/config.xml, hidden_apps). */
     private final Set<String> hidden;
+    /** When not empty, the only grid tiles besides the dock apps and ones added from the library (theme key grid_apps). */
+    private final Set<String> gridOnly;
+    /** icon_only_pills: the App library button is a circle holding just its icon. */
+    private final boolean iconOnlyLibrary;
     private final boolean animations;
     private final boolean advancedEffects;
     private final boolean showLibrary;
@@ -204,10 +208,12 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.favourites = cfg.dockApps;
         this.fillDock = cfg.fillDock;
         this.hidden = new HashSet<>(cfg.hiddenApps);
+        this.gridOnly = new HashSet<>(cfg.gridApps);
+        this.iconOnlyLibrary = cfg.iconOnlyPills;
         this.animations = cfg.animations;
         this.advancedEffects = cfg.animations && cfg.advancedEffects;
         this.showHomeSettings = cfg.showHomeSettingsShortcut;
-        this.showLibrary = cfg.appLibrary;
+        this.showLibrary = cfg.appLibrary && !cfg.libraryInTopBar;   // in the top bar there is no footer row
         this.reducedMotion = cfg.reducedMotion;
         this.rowsBelowDock = cfg.rowsBelowDock;
         this.dockTitle = cfg.dockTitle;
@@ -251,6 +257,7 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         for (ResolveInfo ri : found) {
             if (ri.activityInfo == null) continue;
             String pkg = ri.activityInfo.packageName;
+            if (!gridOnly.isEmpty() && !gridOnly.contains(pkg) && !favourites.contains(pkg) && !added.contains(pkg)) continue;
             if (pkg.equals(ctx.getPackageName()) || !ri.activityInfo.exported
                     || !LibraryApps.visible(tvPackages.contains(pkg), hidden.contains(pkg), added.contains(pkg), removed.contains(pkg))) continue;
             ComponentName component = new ComponentName(pkg, ri.activityInfo.name);
@@ -343,6 +350,17 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (viewType == 1) {
             View row = LayoutInflater.from(ctx).inflate(R.layout.row_app_library, parent, false);
             View button = row.findViewById(R.id.btnLibrary);
+            if (iconOnlyLibrary) {
+                android.widget.TextView label = (android.widget.TextView) button;
+                float d = ctx.getResources().getDisplayMetrics().density;
+                label.setText("");
+                label.setContentDescription(ctx.getString(R.string.app_library));
+                label.setCompoundDrawablePadding(0);
+                label.setPadding((int) (10 * d), label.getPaddingTop(), (int) (10 * d), label.getPaddingBottom());
+                ViewGroup.LayoutParams lp = label.getLayoutParams();
+                lp.width = (int) (42 * d);
+                label.setLayoutParams(lp);
+            }
             button.setOnClickListener(v -> listener.onLibraryRequested());
             button.setOnFocusChangeListener((v, focused) -> { if (focused) listener.onLibraryFocused(); });
             button.setOnKeyListener((v, key, event) -> {

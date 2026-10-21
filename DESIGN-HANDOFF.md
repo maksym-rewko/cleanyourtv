@@ -42,6 +42,7 @@ A theme can never break Home: a key it does not know is ignored, and a file that
 | Dock as a band or as plain tiles, large dock title | `dock_row`, `dock_title` | No |
 | Background colour, wallpaper, dimming, rotation | `background_color`, `wallpaper`, `wallpaper_dim`, `wallpaper_rotation_minutes` | No |
 | Time-of-day gradient, cinematic top shelf | `sky_intensity`, `cinematic_home` | No |
+| Apps below the dock, all-apps button | `grid_apps` (only these tiles below the dock), `app_library` (the button and the full app list), `library_in_top_bar` (button in the top bar, left of Inputs), `rows_below_dock` | No, but the launcher build must have them |
 | Icon-only top buttons, fixed glow colour | `icon_only_pills`, `ambient_color` | No, but the launcher build must be one that has them (this repo's) |
 | Gradient wallpaper (cool black to deep blue) | `python3 tools/make-wallpaper.py --from "#05070C" --to "#0A2A5E"` writes `themes/maksym/wallpaper.jpg`; `wallpaper: true` shows it | No |
 | Motion: springs, focus lift, fades | `animations`, `reduced_motion`, `advanced_effects` | No |

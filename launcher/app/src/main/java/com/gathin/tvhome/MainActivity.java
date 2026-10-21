@@ -135,6 +135,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private boolean iconOnlyPills;
     /** ambient_color: one fixed glow colour instead of each app's own; 0 keeps per-app colours. */
     private int fixedAmbient;
+    /** library_in_top_bar: the App library button is in the top bar, left of Inputs, with no footer row. */
+    private boolean libraryInTopBar;
     private TextView shamsiDate;
     private TextView stats;
     private List<RaceWeekend.Race> raceCalendar;
@@ -333,6 +335,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         greetingName = cfg.greetingName;
         iconOnlyPills = cfg.iconOnlyPills;
         fixedAmbient = cfg.ambientColor;
+        libraryInTopBar = cfg.appLibrary && cfg.libraryInTopBar;
         if (shamsi) {
             shamsiDate.setVisibility(View.VISIBLE);
             TextView date = findViewById(R.id.date);
@@ -477,6 +480,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         }
 
         btnInputs = findViewById(R.id.btnInputs);
+        View btnApps = findViewById(R.id.btnApps);
+        if (libraryInTopBar) {
+            btnApps.setVisibility(View.VISIBLE);
+            btnApps.setOnClickListener(v -> onLibraryRequested());
+        }
         View btnSettings = findViewById(R.id.btnSettings);
         btnInputs.setOnClickListener(v -> showInputs());
         btnWifi.setOnClickListener(v -> openNetworkPill());
@@ -509,18 +517,20 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
                 focusTile(lastFocused % COLUMNS);
                 return true;
             }
-            int firstButton = btnInputs.getVisibility() == View.VISIBLE ? R.id.btnInputs : R.id.btnWifi;
+            int firstButton = libraryInTopBar ? R.id.btnApps
+                    : btnInputs.getVisibility() == View.VISIBLE ? R.id.btnInputs : R.id.btnWifi;
             int leftButton = rtlMenuBar ? R.id.btnSettings : firstButton;
             int rightButton = rtlMenuBar ? firstButton : R.id.btnSettings;
             if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) return v.getId() == leftButton;
             return keyCode == KeyEvent.KEYCODE_DPAD_RIGHT && v.getId() == rightButton;
         };
+        btnApps.setOnKeyListener(pillKeys);
         btnInputs.setOnKeyListener(pillKeys);
         btnWifi.setOnKeyListener(pillKeys);
         btnSettings.setOnKeyListener(pillKeys);
         btnReorder.setOnKeyListener(pillKeys);
         if (advancedEffects) {
-            for (View button : new View[]{btnInputs, btnWifi, btnReorder, btnSettings}) {
+            for (View button : new View[]{btnApps, btnInputs, btnWifi, btnReorder, btnSettings}) {
                 button.setOnFocusChangeListener((view, focused) -> view.animate()
                         .scaleX(focused ? 1.04f : 1f).scaleY(focused ? 1.04f : 1f)
                         .setDuration(160).start());
@@ -1684,6 +1694,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     private void focusLibrary() {
         cancelPendingFocusScroll();
+        if (libraryInTopBar) {   // the button is in the top bar: focus returns to it, there is no footer row
+            libraryFocusPending = false;
+            findViewById(R.id.btnApps).requestFocus();
+            return;
+        }
         int position = adapter.appCount();
         if (!adapter.isLibraryAt(position)) return;
         RecyclerView.ViewHolder holder = grid.findViewHolderForAdapterPosition(position);
