@@ -112,6 +112,8 @@ final class Config {
     final List<String> gridApps;
     /** The App library button sits in the top bar, left of Inputs, instead of after the last grid row (theme key library_in_top_bar). */
     final boolean libraryInTopBar;
+    /** Clock screensaver on plain black with the clock and date centred and still (theme key dream_plain). */
+    final boolean dreamPlain;
 
     private Config(List<String> dockApps, boolean fillDock, List<String> hiddenApps, String liveTvPackage,
                    String liveTvAction, Map<String, String> launchActions, Map<String, String> appLabels,
@@ -123,7 +125,7 @@ final class Config {
                    int wallpaperRotationMinutes, int wallpaperDim, boolean overlayApplied,
                    Festival festival, int[] inputKeycodes, List<String> appKeys,
                    List<RaceWeekend.Race> raceCalendar, boolean cinematicHome, boolean iconOnlyPills, int ambientColor,
-                   List<String> gridApps, boolean libraryInTopBar) {
+                   List<String> gridApps, boolean libraryInTopBar, boolean dreamPlain) {
         this.inputKeycodes = inputKeycodes;
         this.appKeys = Collections.unmodifiableList(appKeys);
         this.dockApps = Collections.unmodifiableList(dockApps);
@@ -169,6 +171,7 @@ final class Config {
         this.ambientColor = ambientColor;
         this.gridApps = Collections.unmodifiableList(gridApps);
         this.libraryInTopBar = libraryInTopBar;
+        this.dreamPlain = dreamPlain;
     }
 
     /** The folder the theme tools push into; null when external storage is unavailable. */
@@ -215,6 +218,7 @@ final class Config {
         int ambientColor = 0;
         List<String> gridApps = new ArrayList<>();
         boolean libraryInTopBar = false;
+        boolean dreamPlain = false;
         boolean applied = false;
 
         File dir = dir(ctx);
@@ -259,6 +263,7 @@ final class Config {
             ambientColor = color(json, "ambient_color", ambientColor);
             gridApps = stringList(json, "grid_apps", gridApps);
             libraryInTopBar = bool(json, "library_in_top_bar", libraryInTopBar);
+            dreamPlain = bool(json, "dream_plain", dreamPlain);
         }
         // A theme push or reset invalidates choices made on the TV. On first use, remember the
         // current theme without clearing choices from an older launcher version.
@@ -313,7 +318,7 @@ final class Config {
                 Math.max(0, Math.min(100, skyIntensity)), settingsKeycodes, settingsKeyPanel, wallpaperEnabled, wallpaper,
                 wallpapers, rotationMinutes, wallpaperDim, applied,
                 festival, inputKeycodes, appKeys, json == null ? Collections.emptyList() : raceCalendar(json), cinematic, iconOnlyPills, ambientColor,
-                gridApps, libraryInTopBar);
+                gridApps, libraryInTopBar, dreamPlain);
     }
 
     /**

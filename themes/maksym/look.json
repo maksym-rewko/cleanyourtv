@@ -2,6 +2,7 @@
   "dock_apps": ["com.netflix.ninja", "com.amazon.amazonvideo.livingroom", "com.google.android.youtube.tv", "com.apple.atve.sony.appletv", "com.upst.hayu", "com.nst.iptvsmarterstvbox", "com.disney.disneyplus"],
   "columns": 7,
   "library_in_top_bar": true,
+  "dream_plain": true,
   "grid_apps": ["com.esaba.downloader", "com.android.vending"],
   "app_library": true,
   "rows_below_dock": 1,

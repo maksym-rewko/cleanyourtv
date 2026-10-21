@@ -27,6 +27,8 @@ public class ClockDream extends DreamService {
     private GradientDrawable glow;
     private int colorIndex;
     private int glowColor;
+    /** dream_plain (theme): plain black, clock and date centred and still. */
+    private boolean plain;
 
     private final Runnable tick = new Runnable() {
         @Override
@@ -54,6 +56,11 @@ public class ClockDream extends DreamService {
                 glow.setGradientRadius((r - l) * 0.55f));
         colorIndex = random.nextInt(PALETTE.length);
         setGlow(PALETTE[colorIndex]);
+        plain = Config.load(this).dreamPlain;
+        if (plain) {
+            ambient.setVisibility(View.GONE);
+            ((android.widget.LinearLayout) content).setGravity(android.view.Gravity.CENTER_HORIZONTAL);
+        }
     }
 
     @Override
@@ -64,7 +71,7 @@ public class ClockDream extends DreamService {
             placeClock();
             content.animate().alpha(1f).setDuration(1200).start();
         });
-        handler.postDelayed(tick, MOVE_MS);
+        if (!plain) handler.postDelayed(tick, MOVE_MS);   // plain stays put: no drift, no glow to shift
     }
 
     @Override
@@ -89,6 +96,11 @@ public class ClockDream extends DreamService {
     /** A random spot that keeps the whole clock on screen, with the glow centred behind it. */
     private void placeClock() {
         View parent = (View) content.getParent();
+        if (plain) {
+            content.setX((parent.getWidth() - content.getWidth()) / 2f);
+            content.setY((parent.getHeight() - content.getHeight()) / 2f);
+            return;
+        }
         int maxX = Math.max(0, parent.getWidth() - content.getWidth());
         int maxY = Math.max(0, parent.getHeight() - content.getHeight());
         float x = maxX * (0.1f + 0.8f * random.nextFloat());
