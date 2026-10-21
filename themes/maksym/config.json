@@ -1,0 +1,13 @@
+{
+  "dock_apps": ["com.netflix.ninja", "com.amazon.amazonvideo.livingroom", "com.google.android.youtube.tv", "com.apple.atve.sony.appletv"],
+  "hidden_apps": ["com.sony.dtv.tvx"],
+  "live_tv_package": "com.sony.dtv.tvx",
+  "columns": 4,
+  "rows_below_dock": 0,
+  "dock_title": true,
+  "dock_row": true,
+  "animations": true,
+  "reduced_motion": false,
+  "background_color": "#000000",
+  "wallpaper": false
+}
