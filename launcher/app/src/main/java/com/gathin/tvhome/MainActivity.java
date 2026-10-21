@@ -131,6 +131,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private TextView greeting;
     private View btnInputs;
     private TextView btnWifi;
+    /** icon_only_pills: Inputs, network and Settings show only their icon. */
+    private boolean iconOnlyPills;
+    /** ambient_color: one fixed glow colour instead of each app's own; 0 keeps per-app colours. */
+    private int fixedAmbient;
     private TextView shamsiDate;
     private TextView stats;
     private List<RaceWeekend.Race> raceCalendar;
@@ -327,6 +331,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         showStats = cfg.showStats;
         shamsi = cfg.shamsiDate;
         greetingName = cfg.greetingName;
+        iconOnlyPills = cfg.iconOnlyPills;
+        fixedAmbient = cfg.ambientColor;
         if (shamsi) {
             shamsiDate.setVisibility(View.VISIBLE);
             TextView date = findViewById(R.id.date);
@@ -479,6 +485,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             return true;
         });
         btnSettings.setOnClickListener(v -> open(systemIntent(Settings.ACTION_SETTINGS)));
+        if (iconOnlyPills) {
+            makeIconOnly((TextView) btnInputs, getString(R.string.inputs));
+            makeIconOnly(btnWifi, getString(R.string.wifi));
+            makeIconOnly((TextView) btnSettings, getString(R.string.settings));
+        }
         btnReorder = findViewById(R.id.btnReorder);
         btnReorder.setOnClickListener(v -> toggleReorder());
         btnReorder.setVisibility(cfg.reorderButton ? View.VISIBLE : View.GONE);
@@ -1330,6 +1341,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
      * so changing apps neither repaints it on the CPU (about 11 ms) nor uploads it again.
      */
     private void setAmbient(int color) {
+        if (fixedAmbient != 0) color = fixedAmbient;
         if (color == ambientColor && ambient.getBackground() != null) return;
         ambientColor = color;
         BitmapDrawable glow = (BitmapDrawable) ambient.getBackground();
@@ -1365,6 +1377,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     }
 
     private void transitionAmbient(int color) {
+        if (fixedAmbient != 0) color = fixedAmbient;
         // A rapid focus change continues from the colour actually displayed on screen.
         stopAmbientAnimation();
         ambient.animate().cancel();
@@ -1834,6 +1847,18 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         racePanel.setVisibility(View.VISIBLE);
     }
 
+    /** icon_only_pills: the pill becomes a 42dp circle holding just its icon, like the reorder button. */
+    private void makeIconOnly(TextView pill, String description) {
+        pill.setText("");
+        pill.setContentDescription(description);
+        pill.setCompoundDrawablePadding(0);
+        int pad = (int) (10 * density);
+        pill.setPadding(pad, pill.getPaddingTop(), pad, pill.getPaddingBottom());
+        android.view.ViewGroup.LayoutParams lp = pill.getLayoutParams();
+        lp.width = (int) (42 * density);
+        pill.setLayoutParams(lp);
+    }
+
     /** Shows the Wi-Fi network name on the button when we can read it, otherwise the connection type. */
     private void updateWifiLabel() {
         String text = getString(R.string.wifi);
@@ -1880,7 +1905,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         }
         // With a VPN app configured, a VPN that is down matters too: show a red "VPN off" capsule then.
         boolean vpnDown = !vpn && online && !vpnApp.isEmpty();
-        if (vpn || vpnDown) {
+        if (iconOnlyPills) {
+            // No label at all: the network name and the VPN capsule stay out of the pill, the name goes to accessibility.
+            btnWifi.setText("");
+            btnWifi.setContentDescription(text);
+        } else if (vpn || vpnDown) {
             // Network name, then the green lock-and-VPN (or red "VPN off") capsule drawn in place of the word.
             String badge = getString(vpn ? R.string.vpn : R.string.vpn_off);
             VpnBadge span = new VpnBadge(vpn ? getDrawable(R.drawable.ic_lock) : null, density);
@@ -2218,7 +2247,19 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         panel.setPivotY(0f);
         panel.setScaleY(0.92f);
         panel.setTranslationY(-8 * density);
-        popup.showAsDropDown(anchor, 0, (int) (10 * density), gravity);
+        // A menu hung from the left of a pill that sits near the right edge would run off the screen and Android would
+        // push it flush against the edge, outside the safe margin. Keep its right edge on the top bar's own margin,
+        // which is where the Settings pill ends.
+        int xOffset = 0;
+        View bar = findViewById(R.id.btnSettings);
+        if (gravity == Gravity.START && bar != null && popup.getWidth() > 0) {
+            int[] anchorAt = new int[2];
+            int[] barAt = new int[2];
+            anchor.getLocationOnScreen(anchorAt);
+            bar.getLocationOnScreen(barAt);
+            xOffset = Math.min(0, barAt[0] + bar.getWidth() - (anchorAt[0] + popup.getWidth()));
+        }
+        popup.showAsDropDown(anchor, xOffset, (int) (10 * density), gravity);
         panel.animate().alpha(1f).scaleY(1f).translationY(0f).setDuration(220)
                 .setInterpolator(new android.view.animation.DecelerateInterpolator(1.6f)).start();
     }

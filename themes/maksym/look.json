@@ -6,6 +6,9 @@
   "dock_row": true,
   "animations": true,
   "reduced_motion": false,
-  "background_color": "#000000",
-  "wallpaper": false
+  "greeting_name": "Danika & Maksym",
+  "icon_only_pills": true,
+  "ambient_color": "#1C4FA3",
+  "background_color": "#05070C",
+  "wallpaper": true
 }

@@ -159,4 +159,10 @@
          dots, the focus glow takes the app's colour and the dock band turns translucent. false keeps the plain
          shelf. Can also be set with "cinematic_home": true in a theme's config.json. -->
     <bool name="cinematic_home">false</bool>
+
+    <!-- Inputs, network and Settings as icon-only circles, like the reorder button: no labels, and the network
+         name is not shown (it stays in the content description). Can also be set with "icon_only_pills": true in a
+         theme's config.json. A theme can also set "ambient_color": "#RRGGBB" to pin the focus glow to one colour
+         instead of each app's own. -->
+    <bool name="icon_only_pills">false</bool>
 </resources>
