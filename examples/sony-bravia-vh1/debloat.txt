@@ -1,0 +1,56 @@
+# Sony BRAVIA VH1 (XBR-55X900H, device BRAVIA_VH1, MediaTek), Android TV 12 (API 31)
+# Build BRAVIA_VH1_UC-user 12 STT2.230505.001.S137 626241 release-keys
+#
+# Apply:   TV_HOST=<tv ip> tools/disable.sh examples/sony-bravia-vh1/debloat.txt
+# Undo:    TV_HOST=<tv ip> tools/restore.sh examples/sony-bravia-vh1/debloat.txt com.google.android.tvlauncher
+# Everything is DISABLED, not uninstalled. Comment out any line you want to keep.
+#
+# Stock launcher: com.google.android.tvlauncher (Android TV launcher, NOT Google TV's launcherx).
+# Only tvlauncher and com.android.tv.settings answer HOME. Disable tvlauncher only after the new
+# launcher is installed and confirmed as Home (Phase 4); it is not in this file yet.
+# Live TV / tuner app: com.sony.dtv.tvx (set it as live_tv_package in the launcher's config.xml).
+# Wi-Fi networks are owned by android.uid.system, so disabling setupwraith later does not drop Wi-Fi.
+#
+# Based on examples/sony-bravia-4k-vh2/debloat.txt: all 15 of its entries are installed on this set.
+# Batches are enabled one at a time and the TV is checked after each. A batch that is commented out
+# has not been applied yet.
+#
+# Already disabled before this list: com.android.vending (Play Store, left as is by the owner),
+# com.sony.dtv.homekit, com.sony.dtv.b2b.vendorprotocol, com.sony.dtv.b2b.softap,
+# com.google.android.music, com.google.android.play.games.
+# Kept by owner's choice: Chromecast built-in (com.google.android.apps.mediashell) and AirPlay
+# (com.sony.dtv.airplayapp, com.apple.atve.sony.appletv).
+# Owner's own apps, never touched: com.nst.iptvsmarterstvbox, com.upst.hayu, com.esaba.downloader.
+
+# Batch 1: ACR viewing tracker and telemetry
+tv.samba.ssm                                   # Samba TV fingerprints what is on screen
+tv.samba.ssm.ui
+com.qterics.da.product
+com.sony.dtv.da.service
+com.sonyericsson.idd.agent
+com.sony.dtv.sonybugreportsys
+com.google.android.feedback
+
+# Batch 2: demo / shop mode
+com.sony.dtv.demosupport
+com.sony.dtv.demosystemsupport
+com.sony.dtv.multiscreendemo
+
+# Batch 3: preloaded apps
+com.sony.dtv.customersupport                   # Help tile
+com.sony.dtv.smarthelp
+com.google.android.youtube.tvmusic
+
+# Batch 4 (optional, owner does not use them, but check Live TV and the remote after): voice and updates
+com.google.android.katniss                     # voice assistant
+com.sony.dtv.voicesearch
+com.sony.dtv.assistantadapter
+com.sony.dtv.systemupdate                      # firmware updates stop until re-enabled
+com.sony.dtv.update
+
+# Phase 4: applied only after the new launcher (com.gathin.tvhome) was installed and running
+com.google.android.tvlauncher                  # stock launcher; restore.sh re-enables it and gives Home back
+
+# Held until the new launcher has been Home for a while:
+# com.google.android.tvrecommendations         # recommendation rows
+# com.google.android.tungsten.setupwraith      # setup wizard
