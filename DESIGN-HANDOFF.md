@@ -20,8 +20,9 @@ Check the IP in Settings > Network first; it can change after a reboot.
 
 | You change | Needs a rebuild? | Command |
 |---|---|---|
-| Anything in `themes/maksym/config.json`, plus its `wallpaper.jpg` | No, live in a few seconds | `tools/theme.sh themes/maksym` |
-| Back to the built-in look | No | `tools/theme.sh --reset` |
+| Anything in `themes/maksym/look.json`, plus its `wallpaper.jpg` | No, live in a few seconds | `tools/push-theme.sh sony` (or `hisense`, or `all`) |
+| Preview the merged config without pushing | n/a | `tools/push-theme.sh sony --dry` |
+| Back to the built-in look on one TV | No | `TV_HOST=$TV_SONY tools/theme.sh --reset` |
 | `config.xml`, layouts, drawables, fonts, animations, Java | Yes, about a minute | `launcher/build-and-install.sh` |
 | Which packages are disabled | No | `tools/disable.sh examples/sony-bravia-vh1/debloat.txt` |
 | Undo all debloat and bring the stock launcher back | No | `tools/restore.sh examples/sony-bravia-vh1/debloat.txt com.google.android.tvlauncher` |
@@ -75,9 +76,17 @@ background colour (`background_color`) and, for festival skins, `accent_color`.
 - **Safe margins.** Keep important content about 5 percent in from every edge; some TVs overscan.
 - **Reduced motion.** `"reduced_motion": true` gives a stiff spring with no overshoot and shorter fades.
   Use it if a TV stutters. Test a new animation with it on and off.
-- **Two TVs, one design.** `live_tv_package` and `hidden_apps` in the theme name the Sony tuner app
-  (`com.sony.dtv.tvx`). The Hisense needs its own tuner package, so it will need a copy of this theme with those
-  two lines changed (for example `themes/maksym-hisense/`). The look keys can stay identical.
+- **Two TVs, one design.** The design is edited once, in `themes/maksym/look.json`. What differs per TV is in
+  `themes/maksym/tv/<tv>.json` (today only `sony.json`: the Sony tuner app `com.sony.dtv.tvx`, which is the Live
+  TV package and is hidden from the grid). `tools/push-theme.sh` merges the two, and the per-TV file wins on a
+  clash. For the Hisense, add `tv/hisense.json` with its own tuner package and fill in `TV_HISENSE` in
+  `env.local.sh`. Do not put look settings in the per-TV files, or the TVs drift apart.
+- **Dock apps differ by TV.** A package that is not installed is skipped, so `dock_apps` can list every variant
+  (the Apple TV app's package is `com.apple.atve.sony.appletv` on the Sony and may differ on the Hisense).
+- **Same launcher build.** A theme only matches if both TVs run the same APK. After any rebuild, install it on
+  every TV (`TV_HOST=$TV_SONY launcher/build-and-install.sh`, then the same for the Hisense).
+- **Fire TV.** Fire OS will not give Home to a third-party launcher, so this design only reaches it if the
+  launcher is sideloaded as an ordinary app (Phase 5, option B). Nothing is pushed to it yet.
 
 ## Verify a change
 
