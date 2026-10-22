@@ -1,5 +1,5 @@
 {
-  "dock_apps": ["com.netflix.ninja", "com.amazon.amazonvideo.livingroom", "com.google.android.youtube.tv", "com.apple.atve.sony.appletv", "com.upst.hayu", "com.nst.iptvsmarterstvbox", "com.disney.disneyplus"],
+  "dock_apps": ["com.netflix.ninja", "com.amazon.amazonvideo.livingroom", "com.google.android.youtube.tv", "com.apple.atve.sony.appletv", "com.apple.atve.androidtv.appletv","com.upst.hayu", "com.nst.iptvsmarterstvbox", "com.disney.disneyplus"],
   "columns": 7,
   "library_in_top_bar": true,
   "dream_plain": true,

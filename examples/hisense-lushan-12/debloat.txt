@@ -1,0 +1,43 @@
+# Hisense SmartTV 4K FFM (device lushan, MediaTek MT5896), Android TV / Google TV 12,
+# firmware STT2.230929.001.102, security patch 2026-02-05. The Android model string is "SmartTV 4K FFM".
+#
+# Apply:   TV_HOST=<tv ip> tools/disable.sh examples/hisense-lushan-12/debloat.txt
+# Undo:    TV_HOST=<tv ip> tools/restore.sh examples/hisense-lushan-12/debloat.txt com.google.android.apps.tv.launcherx
+# Everything is DISABLED, not uninstalled. Comment out any line you want to keep.
+#
+# This is a newer unit than examples/hisense-smarttv-4k-ffm (huangshan, Android 10): Hisense renamed
+# com.hisense.* to com.vt.*, so that list does not apply here. The warning from it is kept: a similar
+# model went to Android Recovery after com.hisense.tv.smartsense, smartsense.ui and aiot were disabled.
+# So com.vt.tv.smartsense, com.vt.tv.smartsense.ui and com.vt.tv.aiot are NOT in this list.
+# Apply one batch at a time, wait ~15 s, reboot, check Home, HDMI, Live TV and the remote.
+#
+# Keep: com.vt.tv.tvcenter (Live TV), com.vt.source.* and com.mediatek.* (inputs, HDMI, tuner),
+# com.vt.tvservice, com.vt.tv.input, com.vt.tv.smartservice, com.vt.tv.customerlauncher,
+# com.google.android.tungsten.setupwraith (also answers Home as a recovery screen).
+# Stock launcher: com.google.android.apps.tv.launcherx (the default Home; disabled last, see batch 4).
+# Already disabled at the factory: com.mediatek.tis, com.mediatek.dtv.tvinput.isdbtuner.
+
+# --- Batch 1: telemetry and store/demo mode ---
+com.vt.tv.evservice                    # ACR ("Enhanced Viewing" content recognition)
+com.vt.storemode                       # retail demo / store mode
+com.google.android.feedback
+
+# --- Batch 2: preloads ---
+net.vidaatv.hisense.android.tv         # VIDAA app preload
+com.google.android.play.games
+com.google.android.youtube.tvmusic
+com.vt.fte                             # first-time experience
+
+# --- Batch 3: voice and updates ---
+com.vt.alexa
+com.google.android.katniss             # Assistant and voice search: the remote's mic button stops working
+com.vt.tv.ota                          # firmware updates: re-enable all three to receive an update
+com.vt.tv.usbota
+com.vt.remoteupgrade
+
+# --- Batch 4: stock launcher (only after the new launcher is installed) ---
+# setupwraith also answers Home (as a recovery screen) and outranks a third-party launcher, so both go.
+# Before this: forget and re-join Wi-Fi in Settings. A network saved by the setup wizard belongs to
+# setupwraith and is deleted when it is disabled; tools/disable.sh skips setupwraith until then.
+com.google.android.tungsten.setupwraith
+com.google.android.apps.tv.launcherx
