@@ -1,0 +1,31 @@
+# Hisense 65QD6QF, Fire TV Edition (AFTOLCBC82, codename ginza, MediaTek), Fire OS 8.1.8.0 / Android 11,
+# build RS8180.3746N. Canada.
+#
+# FIRE OS: Home stays com.amazon.tv.launcher/.ui.HomeActivity_vNext (priority 950). Fire OS will not give Home
+# to a third-party launcher, so the shared launcher (com.gathin.tvhome) is installed as an ordinary app
+# (option B): open it from Apps, or put a shortcut to it on Amazon's Home. This list is deliberately small.
+#
+# Apply:   TV_HOST=<tv ip> tools/disable.sh examples/hisense-fire-tv-aftolcbc82/debloat.txt
+# Undo:    TV_HOST=<tv ip> tools/restore.sh examples/hisense-fire-tv-aftolcbc82/debloat.txt com.amazon.tv.launcher
+# (restore.sh re-enables the stock launcher as a matter of routine; on Fire OS it was never disabled.)
+# Everything is DISABLED, not uninstalled. Comment out any line you want to keep.
+#
+# The packages come from lists tested on other Fire TVs (examples/amazon-fire-tv-afttiff43, toshiba-fire-tv-aftha004,
+# both Fire OS 7); this is Fire OS 8, so apply one batch at a time, wait ~15 s, reboot, then check Amazon Home,
+# the remote, HDMI and the apps before the next batch.
+#
+# Keep: com.amazon.tv.launcher, com.amazon.firehomestarter, com.amazon.tv.settings.*, com.amazon.tv.livetv,
+# com.mediatek.*, com.amazon.mediatek.livetv, com.amazon.franktvinput (the inputs and HDMI),
+# com.amazon.tv.devicecontrol, com.amazon.venezia (Appstore), com.amazon.device.software.ota (updates).
+
+# --- Batch 1: ACR, demo and shopping preloads ---
+com.amazon.tv.acr                      # automatic content recognition
+com.amazon.tv.democontent.provider     # retail demo content
+com.amazon.minitv.android.app          # Amazon miniTV
+com.amazon.shoptv.client               # Shop TV
+com.amazon.naatyam                     # Indian-content preload
+
+# --- Batch 2: ad and usage metrics (not applied yet) ---
+# com.amazon.hybridadidservice
+# com.amazon.wirelessmetrics.service
+# com.amazon.client.metrics.api
