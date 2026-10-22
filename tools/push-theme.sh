@@ -14,7 +14,7 @@ ROOT="$(pwd)"
 THEME="${THEME:-themes/maksym}"
 PY=tools/venv/bin/python
 [ -x "$PY" ] || { echo "run: python3 -m venv tools/venv && tools/venv/bin/pip install -r tools/requirements.txt" >&2; exit 1; }
-TARGET="${1:?usage: push-theme.sh <sony|hisense|all> [--dry]}"
+TARGET="${1:?usage: push-theme.sh <sony|hisense|firetv|all> [--dry]}"
 DRY="${2:-}"
 
 push_one() {

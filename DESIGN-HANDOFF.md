@@ -20,7 +20,7 @@ Check the IP in Settings > Network first; it can change after a reboot.
 
 | You change | Needs a rebuild? | Command |
 |---|---|---|
-| Anything in `themes/maksym/look.json`, plus its `wallpaper.jpg` | No, live in a few seconds | `tools/push-theme.sh sony` (or `hisense`, or `all`) |
+| Anything in `themes/maksym/look.json`, plus its `wallpaper.jpg` | No, live in a few seconds | `tools/push-theme.sh sony` (or `hisense`, `firetv`, or `all`) |
 | Preview the merged config without pushing | n/a | `tools/push-theme.sh sony --dry` |
 | Back to the built-in look on one TV | No | `TV_HOST=$TV_SONY tools/theme.sh --reset` |
 | `config.xml`, layouts, drawables, fonts, animations, Java | Yes, about a minute | `launcher/build-and-install.sh` |
@@ -80,17 +80,25 @@ background colour (`background_color`) and, for festival skins, `accent_color`.
 - **Safe margins.** Keep important content about 5 percent in from every edge; some TVs overscan.
 - **Reduced motion.** `"reduced_motion": true` gives a stiff spring with no overshoot and shorter fades.
   Use it if a TV stutters. Test a new animation with it on and off.
-- **Two TVs, one design.** The design is edited once, in `themes/maksym/look.json`. What differs per TV is in
-  `themes/maksym/tv/<tv>.json` (today only `sony.json`: the Sony tuner app `com.sony.dtv.tvx`, which is the Live
-  TV package and is hidden from the grid). `tools/push-theme.sh` merges the two, and the per-TV file wins on a
-  clash. For the Hisense, add `tv/hisense.json` with its own tuner package and fill in `TV_HISENSE` in
-  `env.local.sh`. Do not put look settings in the per-TV files, or the TVs drift apart.
+- **Three TVs, one design.** The design is edited once, in `themes/maksym/look.json`. What differs per TV is in
+  `themes/maksym/tv/<tv>.json`: `sony.json` (tuner app `com.sony.dtv.tvx`, the Live TV package, hidden from the
+  grid), `hisense.json` (tuner `com.vt.tv.tvcenter`) and `firetv.json` (no tuner; the Menu button opens the
+  launcher). `tools/push-theme.sh sony|hisense|firetv|all` merges the two, and the per-TV file wins on a clash.
+  Each TV's address is `TV_SONY`, `TV_HISENSE` or `TV_FIRETV` in `env.local.sh`. Do not put look settings in the
+  per-TV files, or the TVs drift apart.
 - **Dock apps differ by TV.** A package that is not installed is skipped, so `dock_apps` can list every variant
   (the Apple TV app's package is `com.apple.atve.sony.appletv` on the Sony and may differ on the Hisense).
 - **Same launcher build.** A theme only matches if both TVs run the same APK. After any rebuild, install it on
   every TV (`TV_HOST=$TV_SONY launcher/build-and-install.sh`, then the same for the Hisense).
-- **Fire TV.** Fire OS will not give Home to a third-party launcher, so this design only reaches it if the
-  launcher is sideloaded as an ordinary app (Phase 5, option B). Nothing is pushed to it yet.
+- **Fire TV.** Fire OS will not give Home to a third-party launcher, so the launcher is installed as an ordinary
+  app (Phase 5, option B) and Amazon Home stays. Home and Live TV are handled by Fire OS before the launcher's
+  `HomeKeyService` sees them, so the remote's Menu button opens the launcher instead (`app_keys` in
+  `tv/firetv.json`; its in-app menu stops working). The service is enabled with `settings put secure
+  enabled_accessibility_services com.gathin.tvhome/.HomeKeyService` and it reads the theme only when it connects,
+  so after changing `app_keys` turn it off and on. To undo: `settings put secure enabled_accessibility_services ""`.
+- **Debloat lists, one per TV.** `examples/sony-bravia-vh1/`, `examples/hisense-lushan-12/` and
+  `examples/hisense-fire-tv-aftolcbc82/`. On the Google TV Hisense, `setupwraith` also answers Home and outranks
+  a third-party launcher: forget and re-join Wi-Fi first, or disabling it deletes the saved network.
 
 ## Verify a change
 
@@ -104,8 +112,10 @@ what a physical remote button sends: for Home, Input, gear and mic, press the re
 
 ## Safety net
 
-If Home breaks: `tools/venv/bin/python -I tools/tv.py 'pm enable --user 0 com.google.android.tvlauncher'`, then run the restore
-command in the table above. The stock launcher is only disabled, never uninstalled.
+If Home breaks: re-enable the stock launcher (Sony `com.google.android.tvlauncher`, Hisense Google TV
+`com.google.android.apps.tv.launcherx` and `com.google.android.tungsten.setupwraith`), for example
+`tools/venv/bin/python -I tools/tv.py 'pm enable --user 0 com.google.android.tvlauncher'`, then run the restore
+command in the table above with that TV's list. The stock launcher is only disabled, never uninstalled.
 
 ## Before you leave the TV alone
 
